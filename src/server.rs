@@ -1,6 +1,5 @@
 use crate::response::{ResponseBuilder, StatusCode};
 use std::{
-    collections::HashMap,
     io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
 };
