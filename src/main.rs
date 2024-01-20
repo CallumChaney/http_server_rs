@@ -6,6 +6,14 @@ mod server;
 const HOST: &str = "127.0.0.1";
 const PORT: &str = "7878";
 
+/*TODO:
+*
+* [] Add logger
+* [] Multithread
+*   [] tokio?
+*
+* */
+
 fn main() -> std::io::Result<()> {
     let mut server = Server::new(HOST, PORT);
     server
