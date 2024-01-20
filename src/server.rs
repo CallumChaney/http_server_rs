@@ -1,14 +1,16 @@
+use http_server_rs::ThreadPool;
+
 use crate::response::{ResponseBuilder, StatusCode};
 use std::{
     io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Method {
     GET,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Route {
     method: Method,
     path: String,
@@ -40,7 +42,6 @@ impl Server {
     pub fn new<T: Into<String> + std::fmt::Display>(host: T, port: T) -> Self {
         let listener = TcpListener::bind(format!("{host}:{port}"))
             .expect(&format!("Could not connect to server at {host}:{port}"));
-
         Self {
             listener,
             routes: Vec::new(),
@@ -48,9 +49,18 @@ impl Server {
     }
 
     pub fn listen(&mut self) {
+        println!(
+            "Listening on {}",
+            self.listener.local_addr().unwrap().to_string()
+        );
+        let pool = ThreadPool::new(4);
         for stream in self.listener.incoming() {
             let stream = stream.unwrap();
-            handle_connection(stream, &self.routes).unwrap();
+
+            let routes = self.routes.clone();
+            pool.execute(move || {
+                handle_connection(stream, &routes).unwrap();
+            });
         }
     }
     pub fn regester_route(&mut self, route: Route) -> Result<(), ()> {
