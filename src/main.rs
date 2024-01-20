@@ -8,11 +8,9 @@ const PORT: &str = "7878";
 
 fn main() -> std::io::Result<()> {
     let mut server = Server::new(HOST, PORT);
-
     server
         .regester_route(Route::new_get("/", "index.html"))
         .unwrap();
-
     server.listen();
     Ok(())
 }

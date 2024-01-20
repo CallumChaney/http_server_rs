@@ -64,7 +64,6 @@ impl Server {
             return Err(());
         }
 
-        println!("{:?}", &route.get_request_line());
         self.routes.push(route);
         Ok(())
     }
@@ -80,7 +79,6 @@ fn handle_connection(mut stream: TcpStream, routes: &Vec<Route>) -> std::io::Res
         .collect::<Vec<&Route>>()
         .first()
     {
-        println!("{:?}", route);
         match route.method {
             Method::GET => (StatusCode::NotFound, route.file_path.clone().unwrap()),
         }
